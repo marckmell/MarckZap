@@ -3,20 +3,20 @@ import { useState, useEffect } from 'react';
 import { Message } from '@/types/chat';
 
 export const useChat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Carregar histórico do LocalStorage ao iniciar
-  useEffect(() => {
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (typeof window === 'undefined') return [];
     const savedChat = localStorage.getItem('marckzap_chat_history');
     if (savedChat) {
       try {
-        setMessages(JSON.parse(savedChat));
+        return JSON.parse(savedChat);
       } catch (e) {
         console.error('Erro ao carregar histórico:', e);
+        return [];
       }
     }
-  }, []);
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   // Salvar histórico no LocalStorage sempre que mudar
   useEffect(() => {

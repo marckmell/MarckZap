@@ -6,7 +6,8 @@ import { OCRResponse } from '@/types/ocr';
 export async function POST(req: NextRequest) {
   try {
     // Importação dinâmica do pdf-parse para evitar erros de ESM/CommonJS no build do Next.js
-    const pdf = require('pdf-parse');
+    const pdfModule = await import('pdf-parse') as any;
+    const pdf = pdfModule.default || pdfModule;
 
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -53,10 +54,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     console.error('CRITICAL_OCR_ERROR:', error);
     return NextResponse.json(
-      { error: `Erro interno ao processar documento: ${error.message}` },
+      { error: `Erro interno ao processar documento: ${errorMessage}` },
       { status: 500 }
     );
   }

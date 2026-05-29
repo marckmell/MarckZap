@@ -1,4 +1,3 @@
-// src/app/dashboard/ocr/page.tsx
 'use client';
 import React from 'react';
 import Sidebar from '@/components/Layout/Sidebar';

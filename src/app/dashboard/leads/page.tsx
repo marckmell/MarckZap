@@ -16,14 +16,17 @@ interface Lead {
 export default function PipelinePage() {
   const [leads, setLeads] = useState<Lead[]>([]);
 
-  useEffect(() => {
-    fetchLeads();
-  }, []);
-
   const fetchLeads = async () => {
     const { data, error } = await supabase.from('leads').select('id, name, status, value, expected_close_date');
     if (data) setLeads(data);
   };
+
+  useEffect(() => {
+    const loadLeads = async () => {
+      await fetchLeads();
+    };
+    loadLeads();
+  }, []);
 
   const updateLeadStatus = async (leadId: string, newStatus: string) => {
     await supabase.from('leads').update({ status: newStatus }).eq('id', leadId);

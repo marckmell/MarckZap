@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
     const aiResponse = await getAIResponse(body, profile.company_id);
     
     return NextResponse.json(aiResponse);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erro interno no servidor';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
